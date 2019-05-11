@@ -1,0 +1,125 @@
+
+QUESTION  --->  Max Non Negative SubArray :
+
+Find out the maximum sub-array of non negative numbers from an array. The sub-array should be continuous. 
+That is, a sub-array created by choosing the second and fourth element and skipping the third element is invalid.
+
+Maximum sub-array is defined in terms of the sum of the elements in the sub-array. Sub-array A is greater than sub-array B if sum(A) > sum(B).
+
+Example:
+
+A : [1, 2, 5, -7, 2, 3]
+The two sub-arrays are [1, 2, 5] [2, 3].
+The answer is [1, 2, 5] as its sum is larger than [2, 3]
+
+NOTE: If there is a tie, then compare with segment's length and return segment which has maximum length 
+NOTE 2: If there is still a tie, then return the segment with minimum starting index
+
+
+_______________________________________________________________________________________________________________________________
+
+Understanding the question 
+--------------------------
+we are given an array with non negative integers
+goal is to find the max SubArray in terms of sum in the given array .
+here we need to make a note of following :
+subarray must be continuous
+all elements in the array are >= 0
+If two subarray has same max sum then the subarray with max len is considered and if they are same length then consider their starting index
+-------------------------------------------------------------------------------
+naive approach:         timeComplexity : O(n^2) spaceComplexity: O(l)
+---------------------------------------------------------------------------------
+getMaxSubArray(array,n)
+1.maxSum = 0,startingIndex = 0,endingIndex = -1
+2.sum = 0
+3.loop over i <- 0 to n - 1
+4.     sum = 0
+5.     loop over j <- i to n - 1
+6.          if(array[j] >= 0)
+7.              sum += array[j]
+8.              if(sum > maxSum)
+9.                  startingIndex = i
+10.                 endingIndex = j
+11.                 maxSum = sum
+12.             end if
+13.         end if
+14.     end loop
+15.end loop
+16.init a new int array with len = endingIndex - startingIndex + 1
+17.store elements from index startingIndex to endingIndex in newArray
+18.return newArray
+
+In the naive approach we didnt take care of case where SubArrays have same maxSum to check that add another condition to check if sum == maxSum
+and one more case is if such SubArrays have same length then consider the one with min startingIndex
+
+------------------------------------------------------------------------------------
+Optimal approach :      timeComplexity : O(n)   spaceComplexity: O(l)
+------------------------------------------------------------------------------------
+getMaxSubArray(array,n)
+1.maxSum = 0,endingIndex = -1,startingIndex = 0
+2.sum = 0, sI = 0
+3.loop over i <- 0 to n - 1
+4.      if(array[i] < 0)
+5.          sum = 0
+6.          sI = i + 1
+7.      else 
+8.          sum += array[i]
+9.          if(sum > maxSum)
+10.             maxSum = sum
+11.             startingIndex = sI
+12.             endingIndex = j
+13.         else if(sum == maxSum)
+14.             if(endingIndex - startingIndex > endingIndex - sI)
+15.                     startingIndex = sI 
+16.                     endingIndex = j
+17.             else if(endingIndex - startingIndex == endingIndex - sI)
+18.                     if(sI < startingIndex)
+19.                             startingIndex = sI
+20.                             endingIndex = j
+21.                     end if
+22.             end if
+23.     end if
+24.end loop
+25.init a new int array with len = endingIndex - startingIndex + 1
+26.store elements from index startingIndex to endingIndex in newArray
+27.return newArray
+
+----------------------------------------------------------------------------------
+Code Implementation in JAVA
+----------------------------------------------------------------------------------
+
+
+public class Solution {
+    public int[] maxset(int[] A) {
+        int startIndex = 0;
+        int sI = 0;
+        int eI = -1;
+        long max = Long.MIN_VALUE;
+        long maxTill = 0;
+        for(int i=0;i<A.length;i++){
+            maxTill = maxTill+A[i];
+            if(A[i] < 0){
+                startIndex = i+1;
+                maxTill = 0;
+            }
+            if(max < maxTill){
+                max = maxTill;
+                sI = startIndex;
+                eI = i;
+            }
+            else if((max == maxTill) && (eI - sI < i - startIndex)){
+                sI = startIndex;
+                eI = i;
+            }
+        }
+        if(eI == -1){
+            return new int[0];
+        }
+        int[] ar = new int[eI-sI+1];
+        for(int i=0;i<ar.length;i++){
+            ar[i] = A[sI+i];
+        }
+        return ar;
+    }
+}
+
