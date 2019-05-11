@@ -1,0 +1,91 @@
+
+Merge Overlapping Intervals
+
+Given a collection of intervals, merge all overlapping intervals.
+
+For example:
+
+Given [1,3],[2,6],[8,10],[15,18],
+
+return [1,6],[8,10],[15,18].
+
+Make sure the returned intervals are sorted.
+
+_______________________________________________________________________________
+
+Understanding the question
+--------------------------
+we are given with a collection of intervals if one interval start or end lies in other then need to merge
+
+like [1,3] & [2,6]
+2 lies in [1,3]
+
+now consider the min start of [1,3] and [2,6] as start of new interval
+and max end of [1,3] & [2,6] as end of new Interval
+
+if two intervals are overlapping [a,b] & [c,d] 
+
+    ___________________
+    a                   b
+        ___________________________________
+        c                                   d
+
+c <= b is the condition we need to consider .
+
+
+we must sort the intervals by start or end, so that all intervals are formatted in order
+
+-------------------------------------------------------------------------
+approach        timeComplexity : O(nlogn)       spaceComplexity : O(1)
+-------------------------------------------------------------------------
+mergeIntervals(intervals,n)
+1.sort the intervals
+2.loop over i <- 1 tp n - 1
+3.     i1 = interval at i - 1
+4.      i2 = interval at i
+5.      if(i2.start <= i1.end) //check for merge condition
+6.          merge them into one
+7.          place newInterval at i
+8.          remove interval at i - 1
+9.          i--
+10.end loop
+11.return 
+
+---------------------------------------------------------------------------------
+code Implementation in JAVA
+--------------------------------------------------------------------------------
+/**
+ * Definition for an interval.
+ * public class Interval {
+ *     int start;
+ *     int end;
+ *     Interval() { start = 0; end = 0; }
+ *     Interval(int s, int e) { start = s; end = e; }
+ * }
+ */
+public class Solution {
+    class SortInterval implements Comparator<Interval>{
+        public int compare(Interval i1,Interval i2){
+            return (i1.start < i2.start ? -1 : (i1.start == i2.start ? 0 : 1));
+        }
+    }
+    public ArrayList<Interval> merge(ArrayList<Interval> intervals) {
+        SortInterval sortInterval = new SortInterval();
+        Collections.sort(intervals, sortInterval);
+        for(int i=1;i<intervals.size();i++){
+            Interval i1 = intervals.get(i);
+                Interval i2 = intervals.get(i-1);
+                if(i2.end >= i1.start){
+                    int start = Math.min(i1.start,i2.start);
+                    int end = Math.max(i1.end,i2.end);
+                    intervals.set(i,new Interval(start,end));
+                    intervals.remove(i-1);
+                    i--;
+                }
+        }
+        return intervals;
+    }
+}
+---------------------------------------------------------------------------------
+
+
