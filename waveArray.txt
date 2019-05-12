@@ -1,0 +1,59 @@
+
+Problem  --->  Wave Array
+
+Given an array of integers, sort the array into a wave like array and return it, In other words, arrange the elements into a sequence such that
+ a1 >= a2 <= a3 >= a4 <= a5.....
+
+Example
+
+Given [1, 2, 3, 4]
+
+One possible answer : [2, 1, 4, 3]
+Another possible answer : [4, 1, 3, 2]
+
+    NOTE : If there are multiple answers possible, return the one thats lexicographically smallest. So, in example case, you will return [2, 1, 4, 3] 
+
+_______________________________________________________________________________________________________________________________
+
+Understanding the Problem
+--------------------------
+An array is given as an input where the output must be sorted like wave a1 >= a2  <= a3 >= a4 ...
+
+so here 1 2 3 4  as input
+output must be 2 1 4 3 
+if we observe if input is sorted then every two elements swapped
+
+if input is 1 2 3 4 5 
+output is 2 1 4 3 5 
+
+-----------------------------------------------------------------
+approach        timeComplexity : O(nlogn)   spaceComplexity : O(1)
+------------------------------------------------------------------
+
+getWaveArray(array,n)
+1.sort the array
+2.if n is odd
+3.      n--
+4.loop i <- 0 to n - 1
+5.      swap(array[i],array[i + 1])
+6.      i = i + 2
+7.return array
+
+------------------------------------------------------------------
+implementation in JAVA
+------------------------------------------------------------------
+public class Solution {
+    public ArrayList<Integer> wave(ArrayList<Integer> A) {
+        Collections.sort(A);
+        int n = A.size();
+        if(n % 2 != 0){
+            n--;
+        }
+        for(int i=0;i<n-1;i=i+2){
+            int temp = A.get(i);
+            A.set(i,A.get(i+1));
+            A.set(i+1,temp);
+        }
+        return A;
+    }
+}
